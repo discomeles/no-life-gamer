@@ -1,4 +1,5 @@
 import numpy as np
+import pygame
 
 # Matrix for testing purposes
 def test_matrix():
@@ -74,12 +75,42 @@ def evaluate_cells(A):
             temp_matrix[i][j] = cell_value
     return temp_matrix
 
+def game_main():
+    pygame.init()
+
+    display = pygame.display.set_mode((800,600))
+    clock = pygame.time.Clock()
+
+    tiles = []
+    tiles.append(pygame.image.load("grass.png"))
+    tiles.append(pygame.image.load("flower.png"))
+    width = 20
+    height = 20
+    tm = test_matrix()
+    #rm = evaluate_cells(tm)
+
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                exit()
+
+        display.fill((0,0,0))
+
+
+        for i in range(5):
+            for j in range(5):
+                value = tm[i][j]
+                display.blit(tiles[value], (i*20, j*20))
+
+        rm = evaluate_cells(tm)
+        tm = rm.copy()
+
+        pygame.display.flip()
+        clock.tick(1)
+
 
 def main():
-    tm = test_matrix()
-    rm = evaluate_cells(tm)
-    print(tm)
-    print(rm)
+    game_main()
 
 if __name__=="__main__":
     main()

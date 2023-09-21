@@ -86,6 +86,7 @@ def game_main():
     tiles.append(pygame.image.load("flower32.png"))
     width = 25
     height = 15
+    from_top = 40
     tm = create_random_matrix(15,25)
 
     while True:
@@ -99,7 +100,7 @@ def game_main():
         for j in range(25):
             for i in range(15):
                 value = tm[i][j]
-                display.blit(tiles[value], (j*32, i*32))
+                display.blit(tiles[value], (j*32, from_top + i*32))
 
         rm = evaluate_cells(tm)
         tm = rm.copy()

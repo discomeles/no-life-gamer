@@ -82,12 +82,11 @@ def game_main():
     clock = pygame.time.Clock()
 
     tiles = []
-    tiles.append(pygame.image.load("grass.png"))
-    tiles.append(pygame.image.load("flower.png"))
-    width = 20
-    height = 20
-    tm = test_matrix()
-    #rm = evaluate_cells(tm)
+    tiles.append(pygame.image.load("grass32.png"))
+    tiles.append(pygame.image.load("flower32.png"))
+    width = 25
+    height = 15
+    tm = create_random_matrix(15,25)
 
     while True:
         for event in pygame.event.get():
@@ -97,10 +96,10 @@ def game_main():
         display.fill((0,0,0))
 
 
-        for i in range(5):
-            for j in range(5):
+        for j in range(25):
+            for i in range(15):
                 value = tm[i][j]
-                display.blit(tiles[value], (i*20, j*20))
+                display.blit(tiles[value], (j*32, i*32))
 
         rm = evaluate_cells(tm)
         tm = rm.copy()

@@ -49,8 +49,6 @@ def game_main():
                     pause = False
                 if reset_button.rect.collidepoint(event.pos):
                     reset = True
-                    current_time = pygame.time.get_ticks()
-                    reset_timer = current_time + 500
                 if quit_button.rect.collidepoint(event.pos):
                     pygame.quit()
                     quit()
@@ -70,11 +68,7 @@ def game_main():
         display.blit(reset_button.img, (reset_button.x, reset_button.y))
         display.blit(quit_button.img, (quit_button.x, quit_button.y))
 
-        if pause:
-            pygame.time.wait(100)
-            continue
-
-        if reset:
+        if reset or (pause and reset):
             zm = gm.create_zero_matrix(15,25)
             for j in range(25):
                 for i in range(15):
@@ -84,6 +78,10 @@ def game_main():
             pygame.display.flip()
             pygame.time.wait(500)
             reset = False
+            continue
+
+        if pause:
+            pygame.time.wait(100)
             continue
 
         if not reset:

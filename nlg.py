@@ -20,6 +20,29 @@ class Button(pygame.sprite.Sprite):
         if value == "up":
             self.img = self.img_up
 
+class Logo(pygame.sprite.Sprite):
+    def __init__(self, img: str, x: int, y: int):
+        self.img = pygame.image.load(img).convert()
+        self.width = self.img.get_width()
+        self.height = self.img.get_height()
+        self.x = x
+        self.y = y
+        self.rect = pygame.Rect(self.x, self.y, self.width, self.height)
+
+    def move(self, dx, dy):
+        self.x += dx
+        self.rect.x += dx
+        self.y += dy
+        self.rect.y += dy
+
+
+# def start_screen(display):
+#     display.fill((0, 0, 0))
+#     font1 = pygame.font.SysFont('mono', 20, bold = True)
+#     logo = Logo("resources/discomeles-logo.png", 88, -241)
+#     display.blit(logo, (88, 80))
+#     pygame.display.update()
+
 def game_main():
     pygame.init()
 
@@ -31,6 +54,9 @@ def game_main():
 
     update_matrix = pygame.USEREVENT+1
     pygame.time.set_timer(update_matrix, 1000)
+    counter = pygame.USEREVENT+2
+    pygame.time.set_timer(counter, 1000)
+    count = 0
 
     tiles = []
     tiles.append(pygame.image.load("resources/grass.png").convert())
@@ -42,7 +68,11 @@ def game_main():
     continue_button = Button("resources/cont-button.png", "resources/cont-button-pushed.png", 227, 538)
     reset_button = Button("resources/reset-button.png", "resources/reset-button-pushed.png", 427, 538)
     quit_button = Button("resources/quit-button.png", "resources/quit-button-pushed.png", 627, 538)
+    logo = Logo("resources/discomeles-logo.png", 88, -241)
+    start_txt = Logo("resources/start-txt.png", 244, 300)
+    start_title = Logo("resources/start-title.png", 72, 600)
 
+    state = "startscreen"
     pause = False
     reset = False
 
@@ -84,34 +114,55 @@ def game_main():
                     rm = gm.evaluate_cells(tm)
                     tm = rm.copy()
 
+            if event.type == counter:
+                if state == "startscreen":
+                    count += 1
+
             if event.type == pygame.QUIT:
                 exit()
 
+
+
         display.fill((0,0,0))
 
-        display.blit(title, (89, 8))
-        display.blit(pause_button.img, (pause_button.x, pause_button.y))
-        display.blit(continue_button.img, (continue_button.x, continue_button.y))
-        display.blit(reset_button.img, (reset_button.x, reset_button.y))
-        display.blit(quit_button.img, (quit_button.x, quit_button.y))
+        if state == "startscreen":
+            display.blit(logo.img, (logo.x, logo.y))
+            if logo.y < 60:
+                logo.move(0,2)
+            if count > 5:
+                display.blit(start_txt.img, (start_txt.x, start_txt.y))
+            if count > 6:
+                display.blit(start_title.img, (start_title.x, start_title.y))
+                if start_title.y > 360:
+                    start_title.move(0,-2)
+            if count > 12:
+                state = "game"
+                continue
 
-        if reset or (pause and reset):
-            zm = gm.create_zero_matrix(15,25)
-            for j in range(25):
-                for i in range(15):
-                    value = zm[i][j]
-                    display.blit(tiles[value], (j*32, from_top + i*32))
-            tm = gm.create_random_matrix(15,25)
-            pygame.display.flip()
-            pygame.time.wait(500)
-            reset = False
-            continue
+        if state == "game":
+            display.blit(title, (89, 8))
+            display.blit(pause_button.img, (pause_button.x, pause_button.y))
+            display.blit(continue_button.img, (continue_button.x, continue_button.y))
+            display.blit(reset_button.img, (reset_button.x, reset_button.y))
+            display.blit(quit_button.img, (quit_button.x, quit_button.y))
 
-        if not reset:
-            for j in range(25):
-                for i in range(15):
-                    value = tm[i][j]
-                    display.blit(tiles[value], (j*32, from_top + i*32))
+            if reset or (pause and reset):
+                zm = gm.create_zero_matrix(15,25)
+                for j in range(25):
+                    for i in range(15):
+                        value = zm[i][j]
+                        display.blit(tiles[value], (j*32, from_top + i*32))
+                tm = gm.create_random_matrix(15,25)
+                pygame.display.flip()
+                pygame.time.wait(500)
+                reset = False
+                continue
+
+            if not reset:
+                for j in range(25):
+                    for i in range(15):
+                        value = tm[i][j]
+                        display.blit(tiles[value], (j*32, from_top + i*32))
 
         pygame.display.flip()
         clock.tick(30)

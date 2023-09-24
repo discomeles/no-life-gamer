@@ -25,6 +25,9 @@ def game_main():
 
     display = pygame.display.set_mode((800,600))
     clock = pygame.time.Clock()
+    pygame.display.set_caption('No Life Gamer ~ Yet Another Game of Life')
+    icon = pygame.image.load("resources/icon.png").convert_alpha()
+    pygame.display.set_icon(icon)
 
     update_matrix = pygame.USEREVENT+1
     pygame.time.set_timer(update_matrix, 1000)
